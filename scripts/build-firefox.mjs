@@ -17,11 +17,25 @@ await cp(src, dst, { recursive: true });
 const manifestPath = path.join(dst, 'manifest.json');
 const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
 
+// Firefox: MV2 so host permissions are granted at install time
+// (MV3 in Firefox requires the user to opt in to each site manually).
 const sw = manifest.background?.service_worker;
+manifest.manifest_version = 2;
 manifest.background = {
   scripts: sw ? [sw] : manifest.background?.scripts ?? [],
-  type: 'module',
 };
+manifest.browser_action = { ...manifest.action, default_area: 'navbar' };
+delete manifest.action;
+manifest.permissions = [
+  ...(manifest.permissions ?? []),
+  ...(manifest.host_permissions ?? []),
+  'https://api.mymemory.translated.net/*',
+  'https://dictionary.yandex.net/*',
+];
+delete manifest.host_permissions;
+manifest.web_accessible_resources = (manifest.web_accessible_resources ?? []).flatMap(
+  (r) => (typeof r === 'string' ? [r] : r.resources),
+);
 
 manifest.browser_specific_settings = {
   gecko: {

@@ -25,7 +25,8 @@ async function translateHandler(
 }
 
 async function openSettingsHandler() {
-  await chrome.action.openPopup();
+  // Firefox MV2 build has browserAction instead of action
+  await (chrome.action ?? (chrome as any).browserAction).openPopup();
   setTimeout(() => {
     chrome.runtime.sendMessage(undefined, { type: 'open-settings' });
   }, 100);
