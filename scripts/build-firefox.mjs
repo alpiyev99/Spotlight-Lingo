@@ -31,6 +31,7 @@ manifest.permissions = [
   ...(manifest.host_permissions ?? []),
   'https://api.mymemory.translated.net/*',
   'https://dictionary.yandex.net/*',
+  'https://translate.googleapis.com/*',
 ];
 delete manifest.host_permissions;
 manifest.web_accessible_resources = (manifest.web_accessible_resources ?? []).flatMap(
