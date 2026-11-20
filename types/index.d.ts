@@ -1,18 +1,6 @@
-declare module 'wink-pos-tagger' {
-  export interface TaggedToken {
-    value: string;
-    tag: string;
-    normal: string;
-    pos: string;
-    lemma: string;
-  }
-  interface Tagger {
-    tagSentence(sentence: string): TaggedToken[];
-    tagRawTokens(tokens: string[]): TaggedToken[];
-  }
-  const posTagger: () => Tagger;
-
-  export default posTagger;
+declare module 'wink-porter2-stemmer' {
+  const stemmer: (word: string) => string;
+  export default stemmer;
 }
 
 // WICG Spec: https://wicg.github.io/ua-client-hints

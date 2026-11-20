@@ -1,5 +1,5 @@
 import { detokenize, tokenize } from './tokenize';
-import posTagger from 'wink-pos-tagger';
+import stemmer from 'wink-porter2-stemmer';
 import tokens from './tokens.json';
 
 export interface ProcessResult {
@@ -21,6 +21,7 @@ export interface WordMask {
 }
 
 let wordsToHide: Set<string> = new Set();
+let stemmedWordsToHide: Set<string> = new Set();
 let hideAllWords = false;
 
 export const updateWordsToHide = (
@@ -34,6 +35,7 @@ export const updateWordsToHide = (
   if (hideAllWords) return;
   if (!shouldHideWords) {
     wordsToHide = new Set();
+    stemmedWordsToHide = new Set();
     return;
   }
 
@@ -49,16 +51,16 @@ export const updateWordsToHide = (
   }
 
   wordsToHide = new Set(words);
+  stemmedWordsToHide = new Set(words.map((w) => stemmer(w)));
 };
 
-const tagger = posTagger();
-
 function hideWords(tokens: string[]) {
-  return tagger.tagRawTokens(tokens).map((token) => {
-    if (hideAllWords || wordsToHide.has(token.lemma || token.normal)) {
-      return { isHidden: true, word: token.value };
-    }
-    return { isHidden: false, word: token.value };
+  return tokens.map((token) => {
+    if (hideAllWords) return { isHidden: true, word: token };
+
+    const normal = token.toLowerCase();
+    const isHidden = wordsToHide.has(normal) || stemmedWordsToHide.has(stemmer(normal));
+    return { isHidden, word: token };
   });
 }
 

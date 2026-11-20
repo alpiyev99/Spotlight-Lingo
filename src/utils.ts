@@ -152,6 +152,9 @@ export default function addMouseEnterLeaveEventListeners({
 
 export function toTrustedHTML(htmlString: string) {
   // @ts-ignore
+  if (!window.trustedTypes?.createPolicy) return htmlString;
+
+  // @ts-ignore
   const renderPolicy = window.trustedTypes.createPolicy('render-policy', {
     createHTML: (input: string) => input,
   });

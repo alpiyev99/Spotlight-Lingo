@@ -10,3 +10,8 @@ parcel-bundle-reports
 dist.crx
 dist.pem
 .vercel
+.env
+.env.*
+dist-firefox
+.amo-upload-uuid
+web-ext-artifacts
